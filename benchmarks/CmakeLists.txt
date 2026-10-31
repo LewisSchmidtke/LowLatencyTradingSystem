@@ -1,0 +1,11 @@
+add_executable(llts_bench_spsc_queue bench_spsc_queue.cpp)
+target_link_libraries(llts_bench_spsc_queue PRIVATE llts_common benchmark::benchmark_main)
+llts_set_warnings(llts_bench_spsc_queue OFF)
+
+add_executable(llts_bench_order_book bench_order_book.cpp)
+target_link_libraries(llts_bench_order_book PRIVATE llts_exchange benchmark::benchmark_main)
+llts_set_warnings(llts_bench_order_book OFF)
+
+add_executable(llts_bench_md_codec bench_md_codec.cpp)
+target_link_libraries(llts_bench_md_codec PRIVATE llts_feed benchmark::benchmark_main)
+llts_set_warnings(llts_bench_md_codec OFF)

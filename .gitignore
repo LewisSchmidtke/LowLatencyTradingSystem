@@ -1,0 +1,22 @@
+# Build folders
+build/
+cmake-build-*/
+
+# IDE and tool files
+.idea/
+.cache/
+compile_commands.json
+CMakeUserPresets.json
+
+# macOS
+.DS_Store
+
+# Files the programs produce when they run
+*.bin
+*.log
+*.snapshot.txt
+*.replay.txt
+latency.txt
+
+# Python scripts to automate log tasks
+py_helpers/

@@ -1,0 +1,11 @@
+add_library(llts_common STATIC
+        src/price.cpp
+        src/config.cpp
+        src/cpu.cpp
+        src/clock.cpp
+        src/latency_histogram.cpp
+)
+target_include_directories(llts_common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+llts_set_warnings(llts_common ON)
+
+add_subdirectory(tests)
