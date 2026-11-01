@@ -7,6 +7,7 @@ add_executable(llts_common_tests
         spsc_queue_test.cpp
         object_pool_test.cpp
         types_test.cpp
+        util_test.cpp
 )
 target_link_libraries(llts_common_tests PRIVATE llts_common GTest::gtest_main)
 llts_set_warnings(llts_common_tests OFF)

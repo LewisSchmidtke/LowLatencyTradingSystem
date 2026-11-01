@@ -20,3 +20,6 @@ latency.txt
 
 # Python scripts to automate log tasks
 py_helpers/
+
+# Docs
+docs/
