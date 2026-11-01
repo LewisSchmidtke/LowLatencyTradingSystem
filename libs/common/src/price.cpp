@@ -10,7 +10,8 @@ namespace llts::common {
 std::optional<Price> Price::convert_string_to_price(std::string_view string_input) {
     std::string_view s = string_input;
     const bool is_negative = s.starts_with('-');
-    if (is_negative) s.remove_prefix(1);
+    if (is_negative)
+        s.remove_prefix(1);
 
     const std::vector<std::string> string_parts = util::split_string(s, '.');
 
@@ -39,7 +40,9 @@ std::optional<Price> Price::convert_string_to_price(std::string_view string_inpu
 
     // We check if we can safely multiply dollars by 100 to represent the dollar amount in cents
     const std::optional<std::int64_t> dollars_opt = util::to_int(string_parts[0]);
-    if (!dollars_opt) {return std::nullopt;} // Too many digits to fit into int64
+    if (!dollars_opt) {
+        return std::nullopt;
+    } // Too many digits to fit into int64
     const std::int64_t dollars = *dollars_opt;
     // We check that we are able to multiply the dollar amount by 100 to represent cents safely
     if (dollars > std::numeric_limits<std::int64_t>::max() / 100) {

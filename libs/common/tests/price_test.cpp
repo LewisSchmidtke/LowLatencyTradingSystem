@@ -5,6 +5,31 @@
 namespace lc = llts::common;
 
 static_assert(std::is_trivially_copyable_v<lc::Price>, "Price must be trivially copyable");
+static_assert(lc::Price{}.get_cents() == 0, "Default Price must be 0 cents");
+static_assert(lc::Price{1234}.get_cents() == 1234, "constexpr constructor must store cents");
+
+// Testing the operators
+static_assert(lc::Price{100} < lc::Price{200});
+static_assert(lc::Price{-5} < lc::Price{0});
+static_assert(lc::Price{0} < lc::Price{5});
+static_assert(lc::Price{200} > lc::Price{100});
+static_assert(lc::Price{-5} > lc::Price{-7});
+static_assert(lc::Price{100} == lc::Price{100});
+static_assert(lc::Price{-100} == lc::Price{-100});
+static_assert(lc::Price{100} != lc::Price{101});
+static_assert(lc::Price{100} != lc::Price{-100});
+static_assert(lc::Price{100} >= lc::Price{100});
+static_assert(lc::Price{100} <= lc::Price{100});
+static_assert(lc::Price{-100} >= lc::Price{-100});
+static_assert(lc::Price{-100} <= lc::Price{-100});
+
+static_assert(!(lc::Price{100} < lc::Price{100}));
+static_assert(!(lc::Price{100} > lc::Price{100}));
+static_assert(!(lc::Price{100} != lc::Price{100}));
+
+static_assert(lc::Price{10000}.add_ticks(3) == lc::Price{10003});
+static_assert(lc::Price{10000}.subtract_ticks(3) == lc::Price{9997});
+static_assert(lc::Price{10000}.ticks_above(lc::Price{9999}) == 1);
 
 TEST(Price, ParseTwoDecimals) {
     const auto p = lc::Price::convert_string_to_price("100.10");
@@ -44,6 +69,56 @@ TEST(Price, ValidateOverflowBoundary) {
     EXPECT_FALSE(lc::Price::convert_string_to_price("92233720368547759").has_value());
 }
 
+TEST(Price, AddTicksNormal) {
+    EXPECT_EQ(lc::Price{10000}.add_ticks(3), lc::Price{10003});
+    EXPECT_EQ(lc::Price{10000}.add_ticks(0), lc::Price{10000});
+}
+
+TEST(Price, AddTicksInitialPriceUnchanged) {
+    const lc::Price base{10000};
+    const lc::Price moved = base.add_ticks(10);
+    EXPECT_EQ(moved, lc::Price{10010});
+    EXPECT_EQ(base, lc::Price{10000});
+}
+
+TEST(Price, SubtractTicksNormal) {
+    EXPECT_EQ(lc::Price{10000}.subtract_ticks(3), lc::Price{9997});
+    EXPECT_EQ(lc::Price{10000}.subtract_ticks(0), lc::Price{10000});
+}
+
+TEST(Price, SubtractTicksInitialPriceUnchanged) {
+    const lc::Price base{10000};
+    const lc::Price moved = base.subtract_ticks(10);
+    EXPECT_EQ(moved, lc::Price{9990});
+    EXPECT_EQ(base, lc::Price{10000});
+}
+
+TEST(Price, SubtractAddTicksPriceUnchanged) {
+    const auto base = lc::Price{10000};
+    EXPECT_EQ(base.subtract_ticks(10).add_ticks(10), base);
+}
+
+TEST(Price, SubtractTicksBelowZero) {
+    EXPECT_EQ(lc::Price{2}.subtract_ticks(5), lc::Price{-3});
+}
+
+TEST(Price, TicksAbovePositive) {
+    EXPECT_EQ(lc::Price{10003}.ticks_above(lc::Price{10000}), 3);
+}
+
+TEST(Price, TicksAboveNegative) {
+    EXPECT_EQ(lc::Price{10000}.ticks_above(lc::Price{10003}), -3);
+}
+
+TEST(Price, TicksAboveZero) {
+    EXPECT_EQ(lc::Price{10000}.ticks_above(lc::Price{10000}), 0);
+}
+
+TEST(Price, AddTicksAndTicksAboveConsistency) {
+    const lc::Ticks n = 3;
+    const std::int64_t a = 10000;
+    EXPECT_EQ(lc::Price{a}.add_ticks(n).ticks_above(lc::Price{a}), n);
+}
 
 TEST(Price, RejectEmpty) {
     EXPECT_FALSE(lc::Price::convert_string_to_price("").has_value());
