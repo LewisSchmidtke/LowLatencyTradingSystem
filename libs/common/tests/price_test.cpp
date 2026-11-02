@@ -30,6 +30,8 @@ static_assert(!(lc::Price{100} != lc::Price{100}));
 static_assert(lc::Price{10000}.add_ticks(3) == lc::Price{10003});
 static_assert(lc::Price{10000}.subtract_ticks(3) == lc::Price{9997});
 static_assert(lc::Price{10000}.ticks_above(lc::Price{9999}) == 1);
+static_assert(lc::Price{10000}.add_ticks(-3) == lc::Price{9997});
+static_assert(lc::Price{10000}.subtract_ticks(-3) == lc::Price{10003});
 
 TEST(Price, ParseTwoDecimals) {
     const auto p = lc::Price::convert_string_to_price("100.10");
@@ -102,6 +104,25 @@ TEST(Price, SubtractTicksBelowZero) {
     EXPECT_EQ(lc::Price{2}.subtract_ticks(5), lc::Price{-3});
 }
 
+TEST(Price, AddNegativeTicks) {
+    EXPECT_EQ(lc::Price{10000}.add_ticks(-3), lc::Price{9997});
+}
+
+TEST(Price, SubtractNegativeTicks) {
+    EXPECT_EQ(lc::Price{10000}.subtract_ticks(-3), lc::Price{10003});
+}
+
+TEST(Price, AddNegativeTicksEqualsSubtractTicks) {
+    const lc::Price base{10000};
+    const std::int64_t n = 7;
+    EXPECT_EQ(base.add_ticks(-n), base.subtract_ticks(n));
+    EXPECT_EQ(base.subtract_ticks(-n), base.add_ticks(n));
+}
+
+TEST(Price, AddNegativeTicksBelowZero) {
+    EXPECT_EQ(lc::Price{2}.add_ticks(-5), lc::Price{-3});
+}
+
 TEST(Price, TicksAbovePositive) {
     EXPECT_EQ(lc::Price{10003}.ticks_above(lc::Price{10000}), 3);
 }
@@ -115,7 +136,7 @@ TEST(Price, TicksAboveZero) {
 }
 
 TEST(Price, AddTicksAndTicksAboveConsistency) {
-    const lc::Ticks n = 3;
+    const std::int64_t n = 3;
     const std::int64_t a = 10000;
     EXPECT_EQ(lc::Price{a}.add_ticks(n).ticks_above(lc::Price{a}), n);
 }

@@ -8,7 +8,7 @@ using ClientOrderId = std::uint64_t;
 using ExchangeOrderId = std::uint64_t;
 using Qty = std::uint32_t;
 using Position = std::int64_t;
-using Ticks = std::uint64_t;
+using ClockTicks = std::uint64_t;
 
 constexpr ParticipantId kSimulatorParticipant = 0;
 constexpr ParticipantId kTraderParticipant = 1;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "LLTS/common/types.hpp"
-
 #include <compare>
 #include <cstdint>
 #include <optional>
@@ -29,18 +27,16 @@ public:
 
     /* We will not check for overflow after adding or subtracting ticks here as this is completely
      * unrealistic that adding or subtracting ticks will pass around 92 quadrillion dollars*/
-    [[nodiscard]] constexpr Price add_ticks(Ticks ticks) const {
-        const std::int64_t new_amount = static_cast<std::int64_t>(ticks) + cents;
-        return Price{new_amount};
+    [[nodiscard]] constexpr Price add_ticks(std::int64_t ticks) const {
+        return Price{ticks + cents};
     }
 
-    [[nodiscard]] constexpr Price subtract_ticks(Ticks ticks) const {
-        const std::int64_t new_amount = cents - static_cast<std::int64_t>(ticks);
-        return Price{new_amount};
+    [[nodiscard]] constexpr Price subtract_ticks(std::int64_t ticks) const {
+        return Price{cents - ticks};
     }
 
     [[nodiscard]] constexpr std::int64_t ticks_above(Price other_price) const {
-        const int64_t tick_difference = cents - other_price.cents;
+        const std::int64_t tick_difference = cents - other_price.cents;
         return tick_difference;
     }
 };
